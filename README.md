@@ -1,6 +1,7 @@
 # deepdream
 
 Based on the work of [Alexander Mordvintsev](mailto:moralex@google.com)
+https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream
 
 This directory contains Jupyter notebook that demonstrates a number of Convolutional Neural Network 
 image generation techniques implemented with TensorFlow:
