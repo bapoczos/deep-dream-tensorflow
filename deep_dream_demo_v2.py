@@ -258,8 +258,8 @@ render_lapnorm(T(layer)[:, :, :, channel])
 print('🔥🔥🔥 deep dream 🔥🔥🔥')
 
 
-def render_deepdream(t_obj, img0=img_noise,
-                     iter_n=10, step=1.5, octave_n=4, octave_scale=1.4):
+def render_deepdream(t_obj, img0=input,
+                     iter_n=iterations, step=step, octave_n=octaves, octave_scale=octavescale):
     t_score = tf.reduce_mean(t_obj)  # defining the optimization objective
     # behold the power of automatic differentiation!
     t_grad = tf.gradients(t_score, t_input)[0]
@@ -290,10 +290,19 @@ def render_deepdream(t_obj, img0=img_noise,
             showarray(img / 255.0, fname)
 
 
-img0 = PIL.Image.open('pilatus800.jpg')
+img0 = PIL.Image.open(input)
 
 img0 = np.float32(img0)
 #showarray(img0/255.0, fname)
 render_deepdream(tf.square(T('mixed4c')), img0)
 
 render_deepdream(T(layer)[:, :, :, 139], img0, iter_n=20, step=5, octave_n=4)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='DeepDreamAnim')
+    parser.add_argument('-i', '--input', help='Input directory', required=True)
+    parser.add_argument('-oct', '--octaves', help='Octaves. Default: 4', type=int, required=False)
+    parser.add_argument('-octs', '--octavescale', help='Octave Scale. Default: 1.4', type=float, required=False)
+    parser.add_argument('-itr', '--iterations', help='Iterations. Default: 10', type=int, required=False)
+    parser.add_argument('-s', '--step', help='Step Size. Default: 1.5', type=float, required=False)
+    args = parser.parse_args()
