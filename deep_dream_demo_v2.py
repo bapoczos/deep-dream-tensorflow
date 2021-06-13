@@ -9,7 +9,7 @@ import PIL.Image
 from IPython.display import clear_output, Image, display, HTML
 
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 #!wget https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip && unzip inception5h.zip
 
