@@ -6,7 +6,7 @@ from io import BytesIO
 import numpy as np
 from functools import partial
 import PIL.Image
-#from IPython.display import clear_output, Image, display, HTML
+from IPython.display import clear_output, Image, display, HTML
 
 
 import tensorflow as tf
@@ -46,10 +46,10 @@ img_noise = np.random.uniform(size=(224, 224, 3)) + 100.0
 
 def showarray(a, fname, fmt='jpeg'):
     a = np.uint8(np.clip(a, 0, 1) * 255)
-    #f = BytesIO()
+    f = BytesIO()
 
     PIL.Image.fromarray(a).save(fname, fmt)
-    #display(Image(data=f.getvalue()))
+    display(Image(data=f.getvalue()))
 
 
 
@@ -70,7 +70,7 @@ def render_naive(t_obj, img0=img_noise, iter_n=20, step=1.0):
     t_grad = tf.gradients(t_score, t_input)[0]  # behold the power of automatic differentiation!
 
     img = img0.copy()
-    showarray(visstd(img),'./results/result_0')
+    showarray(visstd(img),'./results/result_0.jpg')
 
     act_obj = sess.run(t_obj, {t_input: img_noise})
     print('objective tensor size', act_obj.shape)
@@ -82,10 +82,10 @@ def render_naive(t_obj, img0=img_noise, iter_n=20, step=1.0):
         img += g * step
         print(i, ' ', score)
 
-        fname='./results/result_'+str(i)
+        fname='./results/result_'+str(i) + '.jpg'
         showarray(visstd(img),fname)
-        # clear_output()
-    showarray(visstd(img),'./results/result_final')
+        clear_output()
+    showarray(visstd(img),'./results/result_final.jpg')
 
 render_naive(T(layer)[:, :, :, channel])
 
@@ -148,7 +148,7 @@ def calc_grad_tiled(img, t_grad, t_score, t_obj, tile_size=512):
             g, score = sess.run([t_grad,t_score ], {t_input: sub})
             #score = sess.run(t_score, {input: sub})
             grad[y:y+sz,x:x+sz] = g
-            #print('x:',x,'y:',y)
+            print('x:',x,'y:',y)
 
 
             print('score: ', score)
@@ -173,10 +173,10 @@ def render_multiscale(t_obj, img0=img_noise, iter_n=10, step=1.0, octave_n=3, oc
             g /= g.std() + 1e-8  # for different layers and networks
             img += g * step
             print('o: ' ,octave,'i: ',i, 'size:', g.shape, end=' ')
-            # clear_output()
+            clear_output()
 
 
-            fname = './results/multi_scale_result_' + str(i)+ '_'+str(octave)
+            fname = './results/multi_scale_result_' + str(i)+ '_'+str(octave) + '.jpg'
             showarray(visstd(img), fname)
 
 
@@ -256,7 +256,7 @@ def render_lapnorm(t_obj, img0=img_noise, visfunc=visstd,
             #print('.', end = ' ')
             print('o: ', octave, 'i: ', i, 'size:', g.shape, end=' ')
 
-            fname = './results/laplace_result_' + str(i) + '_' + str(octave)
+            fname = './results/laplace_result_' + str(i) + '_' + str(octave) + '.jpg'
             showarray(visstd(img), fname)
 
 
@@ -295,18 +295,18 @@ def render_deepdream(t_obj, img0=img_noise,
             g = calc_grad_tiled(img, t_grad,t_score, t_obj)
             img += g * (step / (np.abs(g).mean() + 1e-7))
             print('.', end=' ')
-            # clear_output()
+            clear_output()
 
-            fname = './results/deep_dream_result_' + str(i) + '_' + str(octave)
+            fname = './results/deep_dream_result_' + str(i) + '_' + str(octave) + '.jpg'
             showarray(img / 255.0, fname)
 
 
 
 #img0 = PIL.Image.open('pilatus800.jpg')
-img0 = PIL.Image.open('mmd_22000_01_9000.png')
+img0 = PIL.Image.open('pilatus800.jpg')
 
 img0 = np.float32(img0)
-#showarray(img0/255.0)
-#render_deepdream(tf.square(T('mixed4c')), img0)
+#showarray(img0/255.0, fname)
+render_deepdream(tf.square(T('mixed4c')), img0)
 
 render_deepdream(T(layer)[:,:,:,139], img0, iter_n=20, step=5, octave_n=4)
