@@ -6,6 +6,7 @@ from io import BytesIO
 import numpy as np
 from functools import partial
 import PIL.Image
+import argparse
 from IPython.display import clear_output, Image, display, HTML
 
 
@@ -89,7 +90,7 @@ def render_naive(t_obj, img0=img_noise, iter_n=20, step=1.0):
 render_naive(T(layer)[:, :, :, channel])
 
 
-print('**** Multiscale ****')
+print('🔥🔥🔥 Multiscale 🔥🔥🔥')
 
 
 def tffunc(*argtypes):
@@ -122,7 +123,7 @@ def calc_grad_tiled(img, t_grad, t_score, t_obj, tile_size=512):
     Random shifts are applied to the image to blur tile boundaries over
     multiple iterations.'''
     sz = tile_size
-    #print('tile size', tile_size)
+    print('tile size', tile_size)
 
     h, w = img.shape[:2]
     sx, sy = np.random.randint(sz, size=2)
@@ -174,7 +175,7 @@ def render_multiscale(t_obj, img0=img_noise, iter_n=10, step=1.0, octave_n=3, oc
 render_multiscale(T(layer)[:, :, :, channel])
 
 
-print('**** Laplace ***')
+print('🔥🔥🔥 Laplace 🔥🔥🔥')
 
 k = np.float32([1, 4, 6, 4, 1])
 k = np.outer(k, k)
@@ -213,7 +214,7 @@ def lap_merge(levels):
 def normalize_std(img, eps=1e-10):
     '''Normalize image by making its standard deviation = 1.0'''
     with tf.name_scope('normalize'):
-        std = tf.sqrt(tf.reduce_mean(tf.square(img)))
+        std = tf.sqrt(tf.reduce_mean((img)))
         return img/tf.maximum(std, eps)
 
 
@@ -254,7 +255,7 @@ def render_lapnorm(t_obj, img0=img_noise, visfunc=visstd,
 render_lapnorm(T(layer)[:, :, :, channel])
 
 
-print('**** deep dream ****')
+print('🔥🔥🔥 deep dream 🔥🔥🔥')
 
 
 def render_deepdream(t_obj, img0=img_noise,
@@ -289,7 +290,6 @@ def render_deepdream(t_obj, img0=img_noise,
             showarray(img / 255.0, fname)
 
 
-#img0 = PIL.Image.open('pilatus800.jpg')
 img0 = PIL.Image.open('pilatus800.jpg')
 
 img0 = np.float32(img0)
